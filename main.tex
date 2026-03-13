@@ -1,0 +1,271 @@
+\documentclass{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{ragged2e}
+\usepackage{hyperref}
+\usepackage[none]{hyphenat}
+\setbeamertemplate{itemize item}[ball]
+\usepackage{subfig}
+\graphicspath{{logo/}}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{algpseudocode}
+\usepackage{mathptmx}
+\usepackage{booktabs} % For \toprule, \midrule, \bottomrule
+\usepackage{array}    % For m{} column type and \arraybackslash
+\title[Presentation]{\textbf{Optimizing Crop Yield Prediction with Hybrid FMIG-RFE Feature Selection}}
+\author[Bharath R]{\textbf{Bharath R}\\ \scriptsize{P25UV23T035002} \\ \vspace{1.6cm} \textit{Under the Guidance of} \\ \textbf{\normalsize Dr. Champa H N}\\ \scriptsize{ Professor \\Dept. of Computer Science and Engineering\\University of Visvesvaraya College of Engineering}}
+
+\begin{document}
+
+\maketitle
+
+% Slide: Table of Contents
+\begin{frame}{Table of Contents}
+    \begin{itemize}
+        \item Introduction
+        \item Problem Statement and Proposed Solution
+        \item Methodology
+        \item Filter Stage: Technical Details
+        \item Wrapper Stage: Technical Details
+        \item Implementation Overview
+        \item Feature Selection Results
+        \item Mutual Information Gain (MIG) Ranking
+        \item Fisher Score Ranking
+        \item Feature Reduction Process
+        \item Performance Metrics
+        \item Prediction Accuracy
+        \item Future Directions
+        \item Conclusion
+        \item References
+    \end{itemize}
+\end{frame}
+
+% Slide 1: Introduction
+\begin{frame}{Introduction}
+    \begin{columns}[T]
+        \column{0.55\textwidth}
+        \begin{itemize}
+            \item Agriculture underpins global food security.
+            \item Accurate crop yield prediction enhances resource efficiency and policy decisions.
+            \item Influential factors: Environmental, biological, and management variables.
+        \end{itemize}
+        \column{0.45\textwidth}
+        \begin{itemize}
+            \item Core Features:
+                \begin{itemize}
+                    \item Temperature, rainfall
+                    \item Soil properties
+                    \item Pesticide application
+                \end{itemize}
+            \item Objective: Leverage machine learning for precise yield forecasts.
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+% Slide 2: Problem Statement and Proposed Solution
+\begin{frame}{Problem Statement and Proposed Solution}
+    \begin{block}{Challenge}
+        High-dimensional datasets with noise and redundancy impair model accuracy.
+    \end{block}
+    \pause
+    \begin{block}{Solution}
+        Hybrid FMIG-RFE method (Abdel-salam et al., 2024):
+        \begin{itemize}
+            \item Integrates filter-based (MIG, Fisher Score) and wrapper-based (RFE-SVM) techniques.
+            \item Targets critical predictors: temperature, pesticide usage.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+% Slide 3: Methodology
+\begin{frame}{Methodology}
+    \begin{columns}[T]
+        \column{0.5\textwidth}
+        \begin{block}{Filter Stage}
+            \begin{itemize}
+                \item Ranks features via Fisher Score and MIG.
+                \item Selects top features, computes intersection.
+            \end{itemize}
+        \end{block}
+        \column{0.5\textwidth}
+        \begin{block}{Wrapper Stage}
+            \begin{itemize}
+                \item Refines subset using RFE with SVM.
+                \item Outputs optimal features for SVR prediction.
+            \end{itemize}
+        \end{block}
+    \end{columns}
+    \begin{center}
+        \small{Target: Crop yield (hg/ha) | Model: Support Vector Regression}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Filter Stage: Technical Details}
+    \begin{itemize}
+        \item \textbf{Fisher Score}: Assesses discriminative power. \hfill
+        \[
+        F(x_j) = \frac{\sum_{c=1}^C n_c (\mu_{j,c} - \mu_j)^2}{\sum_{c=1}^C n_c \sigma_{j,c}^2}
+        \]
+        \vspace{0.5cm}
+        \item \textbf{MIG}: Measures dependency. \hfill
+        \[
+        I(x_j; y) = \sum_{x_j} \sum_y p(x_j, y) \log \left( \frac{p(x_j, y)}{p(x_j) p(y)} \right)
+        \]
+        \vspace{0.5cm}
+        \item \textbf{Intersection}: \( F_{\text{common}} = F_{\text{Fisher}} \cap F_{\text{MIG}} \).
+    \end{itemize}
+\end{frame}
+
+% Slide 5: Wrapper Stage - Technical Details
+\begin{frame}{Wrapper Stage: Technical Details}
+    \begin{itemize}
+        \item \textbf{SVM (Linear Kernel)}: \( f(x) = w^T x + b \), separates data with a hyperplane.
+        \item Maximizes margin between classes for robust classification.
+        \item Uses weight vector \( w \) to assess feature importance.
+        \item \textbf{RFE Process}:
+            \begin{enumerate}
+                \item Train SVM on filtered features.
+                \item Rank features by weight magnitude \( |w_j| \).
+                \  \item Iteratively eliminate least significant features.
+            \end{enumerate}
+        \item Result: Optimized feature subset for SVR prediction.
+    \end{itemize}
+\end{frame}
+
+% Slide 6: Implementation Overview
+\begin{frame}{Implementation Overview}
+    \begin{columns}[T]
+        \column{0.5\textwidth}
+        \begin{itemize}
+            \item \textbf{Environment}:
+                \begin{itemize}
+                    \item Python 3.9
+                    \item Libraries: Scikit-learn, Pandas, NumPy
+                \end{itemize}
+            \item \textbf{Dataset}: Consider the datasets which are having multiple features.
+        \end{itemize}
+        \column{0.5\textwidth}
+        \begin{itemize}
+            \item \textbf{Workflow}:
+                \begin{itemize}
+                    \item Data normalization (z-score).
+                    \item Feature selection: Filter + Wrapper.
+                    \item Prediction: SVR with RBF kernel.
+                \end{itemize}
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Feature Selection Results}
+    \begin{center}
+        \begin{minipage}{0.24\textwidth}
+            \begin{itemize}
+                \item Initial Features (6): $Area$, $Item$, $Year$, $rainfall$, $pesticides$, $avg\_temp$.
+            \end{itemize}
+        \end{minipage}\hfill
+        \begin{minipage}{0.24\textwidth}
+            \begin{itemize}
+                \item MIG Top: $pesticides$, $Area$, $Year$, $Item$, $avg\_temp$.
+            \end{itemize}
+        \end{minipage}\hfill
+        \begin{minipage}{0.24\textwidth}
+            \begin{itemize}
+                \item Fisher Top: $Item$, $avg\_temp$, $pesticides$, $rainfall$.
+            \end{itemize}
+        \end{minipage}\hfill
+        \begin{minipage}{0.24\textwidth}
+            \begin{itemize}
+                \item Final (RFE): $avg\_temp$, $pesticides$, $rainfall$.
+            \end{itemize}
+        \end{minipage}
+    \end{center}
+\end{frame}
+
+% Slide 8: MIG Ranking Visualization
+\begin{frame}{Mutual Information Gain (MIG) Ranking}
+    \begin{center}
+        \includegraphics[width=0.75\textwidth]{fig1.png} % Replace with actual file
+    \end{center}
+    \begin{center}
+        \small{Figure 1: Feature ranking by MIG score.}
+    \end{center}
+\end{frame}
+
+% Slide 9: Fisher Score Visualization
+\begin{frame}{Fisher Score Ranking}
+    \begin{center}
+        \includegraphics[width=0.75\textwidth]{f2.png} % Replace with actual file
+    \end{center}
+    \begin{center}
+        \small{Figure 2: Feature ranking by Fisher Score.}
+    \end{center}
+\end{frame}
+
+% Slide 10: Feature Reduction Visualization
+\begin{frame}{Feature Reduction Process}
+    \begin{center}
+        \includegraphics[width=0.75\textwidth]{f3.png} % Replace with actual file
+    \end{center}
+    \begin{center}
+        \small{Figure 3: Reduction from 6 to 2 features via FMIG-RFE.}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Performance Metrics}
+    \begin{center}
+        \begin{tabular}{l>{\centering\arraybackslash}m{2.8cm}>{\centering\arraybackslash}m{2.8cm}>{\centering\arraybackslash}m{2cm}}
+            \toprule
+            \textbf{Model} & \textbf{MAE} & \textbf{MSE} & \textbf{\( R^2 \)} \\
+            \midrule
+            All Features & 44,206.52 & $5.38 \times 10^9$ & 0.2634 \\
+            FMIG-RFE     & 36,317.25 & $3.57 \times 10^9$ & 0.5106 \\
+            \bottomrule
+        \end{tabular}
+        \vspace{0.3cm}
+        \small{Table I: Performance Comparison of SVR Models}
+    \end{center}
+\end{frame}
+
+% Slide 12: Prediction Visualization
+\begin{frame}{Prediction Accuracy}
+    \begin{center}
+        \includegraphics[width=0.75\textwidth]{f4.png} % Replace with actual file
+    \end{center}
+    \begin{center}
+        \small{Figure 4: Actual vs. predicted yield (All Features vs. FMIG-RFE).}
+    \end{center}
+\end{frame}
+\begin{frame}{Conclusion}
+    \justifying % Ensures text is justified for a paragraph look
+    \small % Reduces font size slightly to fit content
+    The hybrid FMIG-RFE method enhances crop yield prediction by integrating filter- and wrapper-based feature selection, reducing noise and redundancy while achieving an \( R^2 \) of 0.5106. Key predictors—average temperature, pesticide usage, and rainfall—underscore critical factors affecting yields. This scalable, adaptable framework supports agricultural machine learning and real-time decisions, with potential for future accuracy gains through advanced preprocessing.
+\end{frame}
+% Slide 13: Future Directions
+\begin{frame}{Future Directions}
+    \begin{itemize}
+        \item Enhance preprocessing with K-means and CFS.
+        \item Optimize SVR hyperparameters using ICOA.
+        \item Incorporate temporal and spatial analyses.
+        \item Benchmark against alternative hybrid methods.
+    \end{itemize}
+\end{frame}
+
+% Slide 14: Conclusion
+
+% Slide 15: References
+\begin{frame}{References}
+    \begin{footnotesize}
+        \begin{itemize}
+            \item[{[1]}] G. Chandrashekar and F. Sahin, "A survey on feature selection methods," \textit{Compute. Elect. Eng.}, vol. 40, no. 1, pp. 16–28, Jan. 2014, doi: 10.1016/j.compeleceng.2013.11.024.
+            \item[{[2]}] P. Swanth, R. K. Kumar, K. V. Reddy, and S. K. Singh, "A hybrid classification model for crop yield prediction using enhanced feature ranking fusion technique," \textit{J. Agric. Eng. Technol.}, vol. 28, no. 2, pp. 123–135, 2023.
+            \item[{[3]}] P. M. Gopal and R. Bhargavi, "A novel approach for efficient crop yield prediction," \textit{Comput. Electron. Agric.}, vol. 165, Oct. 2019, Art. no. 104968, doi: 10.1016/j.compag.2019.104968.
+            \item[{[4]}] P. Das, S. K. Jha, and R. K. Mall, "A hybrid approach for grain yield prediction using MARS, SVR, and ANN," \textit{Int. J. Agric. Environ. Inf. Syst.}, vol. 11, no. 3, pp. 1–18, Jul.–Sep. 2020, doi: 10.4018/IJAEIS.2020070101.
+            \item[{[5]}] R. Kohavi and G. H. John, "The wrapper approach," in \textit{Feature Extraction, Construction and Selection: A Data Mining Perspective}, H. Liu and H. Motoda, Eds. Boston, MA, USA: Springer, 1998, pp. 33–50.
+        \end{itemize}
+    \end{footnotesize}
+\end{frame}
+\end{document}

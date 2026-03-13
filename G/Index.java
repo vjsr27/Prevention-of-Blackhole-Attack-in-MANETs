@@ -9,11 +9,9 @@ import javax.swing.border.Border;
 class Index extends JFrame implements ActionListener
 {
 	
-	static JCheckBox jcbx,jcb,jcb1;
-	
-	
 	JLabel j,j1,j2,jl1,jl2,jl3,jl11,jl12,jl21,jl22,jl31,jl13;
 	JTextField jtf1;
+	static JRadioButton jcb;
 	JTextArea jta;
 	JButton jb,jb1,jb2;
 	Container c;
@@ -22,7 +20,7 @@ class Index extends JFrame implements ActionListener
 	JScrollPane jsp,jsp1,jsp2;
 	JRadioButton jrb,jrb1;
 	ButtonGroup bg;
-	
+	ButtonGroup bg1;
 	
 	public static JComboBox jcmb;
 	public static String Usr_Name="";
@@ -47,7 +45,6 @@ class Index extends JFrame implements ActionListener
 		j=new JLabel(new ImageIcon("red-mail-send-icon.png"));
 		j1=new JLabel(new ImageIcon("Nuvola_apps_remote.png"));
 		j2=new JLabel(new ImageIcon("red-mail-receive-icon.png"));
-		
 		jl1=new JLabel("SENDER");
 		jl11=new JLabel("Dest : ");
 		jl12=new JLabel("Message : ");
@@ -57,12 +54,8 @@ class Index extends JFrame implements ActionListener
 		bg=new ButtonGroup();
 		jtf1=new JTextField();
 		jrb.setSelected(true);
-		jcmb=new JComboBox();
-		
 		bg.add(jrb);
 		bg.add(jrb1);
-		
-		
 		jrb.setBackground(Color.white);
 		jrb1.setBackground(Color.white);
 		
@@ -75,9 +68,6 @@ class Index extends JFrame implements ActionListener
 		jsp.setViewportView(jta2);
 		jsp1=new JScrollPane();
 		jsp1.setViewportView(jta21);
-		jcb=new JCheckBox("Carousel Attack");
-		jcb1=new JCheckBox("Stretch Attack");
-		jcbx=new JCheckBox("Reset");
 		
 		jl3=new JLabel("RECEIVER");
 		jl31=new JLabel("Message :");
@@ -85,19 +75,15 @@ class Index extends JFrame implements ActionListener
 		jta3=new JTextArea();
 		jsp2.setViewportView(jta3);
 		
-		
-		
-		
+		jcmb=new JComboBox();
+		jcb=new JRadioButton("Carousel Attack");
 		jta=new JTextArea();
 		jb=new JButton("Send");
 		jb1=new JButton("Clear");
 		jb2=new JButton("Browse");
 		
 		
-		
 		jcb.setBackground(Color.white);
-		jcb1.setBackground(Color.white);
-		jcbx.setBackground(Color.white);
 		
 		jp.setLayout(null);
 		jp1.setLayout(null);
@@ -120,17 +106,13 @@ class Index extends JFrame implements ActionListener
 		addComponent(jp,jb,20,145,100,25);
 		addComponent(jp,jb1,125,145,100,25);
 		
-		addComponent(jp1,j1,250,40,150,150);
+		addComponent(jp1,j1,235,-10,200,200);
 		addComponent(jp1,jl2,175,0,150,30);
 		addComponent(jp1,jcb,20,30,125,30);
-		addComponent(jp1,jcb1,150,30,125,30);
 		addComponent(jp1,jl21,20,75,100,30);
 		addComponent(jp1,jl22,20,125,100,30);
 		addComponent(jp1,jsp,80,65,175,50);
 		addComponent(jp1,jsp1,80,120,175,50);
-		addComponent(jp1,jcbx,285,20,100,30);
-		
-		
 		
 		addComponent(jp2,j2,235,-10,200,200);
 		addComponent(jp2,jl3,165,0,150,30);
@@ -151,9 +133,6 @@ class Index extends JFrame implements ActionListener
 		jp2.setBorder(raisedetched );
 		
 		jrb.addActionListener(this);
-		jcbx.addActionListener(this);
-		jcb.addActionListener(this);
-		jcb1.addActionListener(this);
 		jrb1.addActionListener(this);
 		jb.addActionListener(this);
 		jb1.addActionListener(this);
@@ -223,36 +202,22 @@ class Index extends JFrame implements ActionListener
 				Socket s=new Socket(IP,6996);
 				ObjectOutputStream oos=new ObjectOutputStream(s.getOutputStream());
 				ObjectInputStream ois=new ObjectInputStream(s.getInputStream());
-				oos.writeObject("RREQ");
+				oos.writeObject("FRWD");
 				oos.writeObject(Usr_Name+"#"+dest);
 				oos.writeObject(Usr_Name);
-				oos.writeObject(false);
 				
-				boolean flg = (Boolean)ois.readObject();
-				
-				if(flg)
-				{
-					String resp=(String)ois.readObject();
-					
-					String split_resp[]=resp.split("#");
-				
-					String nxt_peer=split_resp[0].trim();
-					String nxt_peer_ip=split_resp[1].trim();
-					int port = Integer.parseInt(split_resp[2].trim());
-					
-					jta21.setText("Sending file using node "+nxt_peer);
-					
-					sendDataToNxtPeer(Usr_Name+"#"+dest,Usr_Name,fileData,nxt_peer_ip,port,file_name);
-				
-				}
-				else
-				{
-					String resp=(String)ois.readObject();
-					JOptionPane.showMessageDialog(null,resp);
-				}
-				
+				String resp=(String)ois.readObject();
 				s.close();
 				
+				String split_resp[]=resp.split("#");
+				
+				String nxt_peer=split_resp[0].trim();
+				String nxt_peer_ip=split_resp[1].trim();
+				int port = Integer.parseInt(split_resp[2].trim());
+				
+				jta21.setText("Sending file using node "+nxt_peer);
+				
+				sendDataToNxtPeer(Usr_Name+"#"+dest,Usr_Name,fileData,nxt_peer_ip,port,file_name);
 			}
 			catch(Exception e)
 			{
@@ -300,27 +265,6 @@ class Index extends JFrame implements ActionListener
 			}
 			
 		}
-		else if(source==jcbx|source==jcb|source==jcb1)
-		{
-			System.out.println("IN");
-			if(source==jcbx)
-			{
-				jcb.setSelected(false);
-				jcb1.setSelected(false);
-				jcbx.setSelected(false);	
-			}
-			else if(source==jcb)
-			{
-				jcb1.setSelected(false);
-			}
-			else if(source==jcb1)
-			{
-				jcb.setSelected(false);
-			}
-			
-			
-		}
-		
 		
 	}
 	

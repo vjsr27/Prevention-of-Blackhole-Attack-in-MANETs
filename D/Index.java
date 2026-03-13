@@ -47,7 +47,6 @@ class Index extends JFrame implements ActionListener
 		j=new JLabel(new ImageIcon("red-mail-send-icon.png"));
 		j1=new JLabel(new ImageIcon("Nuvola_apps_remote.png"));
 		j2=new JLabel(new ImageIcon("red-mail-receive-icon.png"));
-		
 		jl1=new JLabel("SENDER");
 		jl11=new JLabel("Dest : ");
 		jl12=new JLabel("Message : ");
@@ -57,7 +56,6 @@ class Index extends JFrame implements ActionListener
 		bg=new ButtonGroup();
 		jtf1=new JTextField();
 		jrb.setSelected(true);
-		jcmb=new JComboBox();
 		
 		bg.add(jrb);
 		bg.add(jrb1);
@@ -75,9 +73,6 @@ class Index extends JFrame implements ActionListener
 		jsp.setViewportView(jta2);
 		jsp1=new JScrollPane();
 		jsp1.setViewportView(jta21);
-		jcb=new JCheckBox("Carousel Attack");
-		jcb1=new JCheckBox("Stretch Attack");
-		jcbx=new JCheckBox("Reset");
 		
 		jl3=new JLabel("RECEIVER");
 		jl31=new JLabel("Message :");
@@ -85,14 +80,14 @@ class Index extends JFrame implements ActionListener
 		jta3=new JTextArea();
 		jsp2.setViewportView(jta3);
 		
-		
-		
-		
+		jcmb=new JComboBox();
+		jcb=new JCheckBox("Carousel Attack");
+		jcb1=new JCheckBox("Stretch Attack");
 		jta=new JTextArea();
 		jb=new JButton("Send");
 		jb1=new JButton("Clear");
 		jb2=new JButton("Browse");
-		
+		jcbx=new JCheckBox("Reset");
 		
 		
 		jcb.setBackground(Color.white);
